@@ -32,7 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define duration 200
+#define duration 2
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -98,17 +98,18 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
- setTimer0 ( duration ) ;
  while (1){
 	 if ( timer0_flag == 1) {
-		 HAL_GPIO_TogglePin ( LED_RED0_GPIO_Port , LED_RED0_Pin ) ;
-		 HAL_GPIO_TogglePin ( LED_YELLOW0_GPIO_Port , LED_YELLOW0_Pin ) ;
-		 setTimer0 ( duration ) ;
+		 HAL_GPIO_TogglePin(LED_RED0_GPIO_Port , LED_RED0_Pin);
+		 HAL_GPIO_TogglePin (LED_YELLOW0_GPIO_Port , LED_YELLOW0_Pin);
+		 setTimer0 (duration);
 	 }
-	 runTimer () ;
+	 runTimer ();
+	 HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+ }
   /* USER CODE END 3 */
 }
 
@@ -217,7 +218,6 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-}
 /* USER CODE END 4 */
 
 /**
