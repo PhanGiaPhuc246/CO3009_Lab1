@@ -22,7 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "software_timer.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -32,6 +32,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define red_duration 500
+#define yellow_duration 200
+#define green_duration 300
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -56,7 +59,11 @@ static void MX_TIM2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+enum led_state {
+	red0,
+	yellow0,
+	green0
+};
 /* USER CODE END 0 */
 
 /**
@@ -89,13 +96,43 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_GPIO_WritePin(LED_RED0_GPIO_Port, LED_RED0_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_YELLOW0_GPIO_Port, LED_YELLOW0_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LED_GREEN0_GPIO_Port, LED_GREEN0_Pin, GPIO_PIN_SET);
+  HAL_TIM_Base_Start_IT (& htim2);
+  enum led_state current_state = red0;
+  enum led_state next_state = current_state;
+  setTimer0(red_duration);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+  while (1){
+	  if (timer0_flag == 1) {
+		  switch (current_state) {
+		  case red0:
+			  HAL_GPIO_WritePin(LED_RED0_GPIO_Port, LED_RED0_Pin, GPIO_PIN_SET);
+			  HAL_GPIO_WritePin(LED_YELLOW0_GPIO_Port, LED_YELLOW0_Pin, GPIO_PIN_RESET);
+			  next_state = yellow0;
+			  setTimer0(yellow_duration);
+			  break;
+		  case yellow0:
+			  HAL_GPIO_WritePin(LED_YELLOW0_GPIO_Port, LED_YELLOW0_Pin, GPIO_PIN_SET);
+			  HAL_GPIO_WritePin(LED_GREEN0_GPIO_Port, LED_GREEN0_Pin, GPIO_PIN_RESET);
+			  next_state = green0;
+			  setTimer0(green_duration);
+			  break;
+		  case green0:
+			  HAL_GPIO_WritePin(LED_GREEN0_GPIO_Port, LED_GREEN0_Pin, GPIO_PIN_SET);
+			  HAL_GPIO_WritePin(LED_RED0_GPIO_Port, LED_RED0_Pin, GPIO_PIN_RESET);
+			  next_state = red0;
+			  setTimer0(red_duration);
+			  break;
+		  default:
+			  break;
+		  }
+	  }
+	  current_state = next_state;
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -208,7 +245,9 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_TIM_PeriodElapsedCallback (TIM_HandleTypeDef * htim) {
+	runTimer();
+}
 /* USER CODE END 4 */
 
 /**
