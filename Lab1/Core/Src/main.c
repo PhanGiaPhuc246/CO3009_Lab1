@@ -32,7 +32,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define duration 2
+#define duration 200
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -90,9 +90,10 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
- HAL_GPIO_WritePin ( LED_RED0_GPIO_Port , LED_RED0_Pin , GPIO_PIN_RESET ) ;
- HAL_GPIO_WritePin ( LED_YELLOW0_GPIO_Port , LED_YELLOW0_Pin , GPIO_PIN_SET ) ;
- setTimer0 ( duration ) ;
+  HAL_GPIO_WritePin ( LED_RED0_GPIO_Port , LED_RED0_Pin , GPIO_PIN_RESET ) ;
+  HAL_GPIO_WritePin ( LED_YELLOW0_GPIO_Port , LED_YELLOW0_Pin , GPIO_PIN_SET ) ;
+  HAL_TIM_Base_Start_IT (& htim2) ;
+  setTimer0 ( duration ) ;
 
   /* USER CODE END 2 */
 
@@ -104,8 +105,6 @@ int main(void)
 		 HAL_GPIO_TogglePin (LED_YELLOW0_GPIO_Port , LED_YELLOW0_Pin);
 		 setTimer0 (duration);
 	 }
-	 runTimer ();
-	 HAL_Delay(1000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -218,6 +217,9 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim ) {
+	runTimer();
+}
 /* USER CODE END 4 */
 
 /**
